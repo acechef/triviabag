@@ -1,11 +1,14 @@
 # coding=utf-8
-from . import db
+from . import db, login_manage
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+# from flask_wtf import Form
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
 
@@ -32,3 +35,8 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+@login_manage.user_loader()
+def load_user(user_id):
+    return User.query.get(int(user_id))
