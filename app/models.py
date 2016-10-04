@@ -76,7 +76,7 @@ class Category(db.Model):
     is_del = db.Column(db.BOOLEAN, default=False)
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
     modify_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    user_id = db.Column(db.Integer,nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return '<Category %r>' % self.name
@@ -95,8 +95,8 @@ class Website(db.Model):
     url = db.Column(db.String(64), index=True)
     title = db.Column(db.String(64))
     description = db.Column(db.Text())
-    status = db.Column(db.BOOLEAN, default=False)# 状态
-    is_del = db.Column(db.BOOLEAN, default=False)# 默认不删除
+    status = db.Column(db.BOOLEAN, default=False)  # 状态
+    is_del = db.Column(db.BOOLEAN, default=False)  # 默认不删除
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
     modify_time = db.Column(db.DateTime(), default=datetime.utcnow)
     user_id = db.Column(db.Integer,nullable=False)
