@@ -43,6 +43,22 @@ def add_category():
     return render_template('add_category.html', form=form)
 
 
+@main.route('/edit_category/<int:cid>', methods=['GET', 'POST'])
+@login_required
+def edit_category(cid):
+    category = Category.query.get_or_404(cid)
+    if category.user_id != current_user.id or category.is_del == 1:
+        abort(403)
+    form = CategoryForm()
+    if form.validate_on_submit():
+        category.name = form.name.data
+        db.session.add(category)
+        flash('Edit category successful!')
+        return redirect(url_for('main.index'))
+    form.name.data = category.name
+    return render_template('add_category.html', form=form)
+
+
 @main.route('/add_website', methods=['GET', 'POST'])
 @login_required
 def add_website():
@@ -52,7 +68,6 @@ def add_website():
         website.url = form.url.data
         website.description = form.description.data
         website.status = form.status.data
-        print(current_user.id)
         website.user_id = current_user.id
 
         try:
@@ -71,35 +86,35 @@ def add_website():
     return render_template('add_website.html', form=form)
 
 
-# @main.route('/edit_website/<int:wid>', methods=['GET', 'POST'])
-# @login_required
-# def edit_website(wid):
-#     website = Website.query.get_or_404(wid)
-#     website_category = WebsiteCategory.query.get_or_404(website.id)  # 获得类别
-#     if website.user_id != current_user.id:
-#         abort(403)
-#     form = WebsiteForm(user=current_user)
-#     if form.validate_on_submit():
-#         website.url = form.url.data
-#         website.description = form.description.data
-#         website.status = form.status.data
-#         website.user_id = current_app.id
-#
-#         try:
-#             db.session.add(website)
-#             db.session.flush()
-#             website_category.category_id = form.category.data
-#             website_category.website_id = website.id
-#             db.session.add(website_category)
-#             db.session.commit()
-#         except:
-#             db.session.rollback()
-#             raise RuntimeError('DB error')
-#         flash('Edit Successful!')
-#         return redirect(url_for('index.html'))
-#     form.url.data = website.url
-#     form.title.data = website.title
-#     form.description.data = website.description
-#     form.category.data = website_category.category_id
-#     form.status.data = website.status
-#     return render_template('edit_website.html', form=form)
+@main.route('/edit_website/<int:wid>', methods=['GET', 'POST'])
+@login_required
+def edit_website(wid):
+    website = Website.query.get_or_404(wid)
+    website_category = WebsiteCategory.query.get_or_404(website.id)  # 获得类别
+    if website.user_id != current_user.id:
+        abort(403)
+    form = WebsiteForm(user=current_user)
+    if form.validate_on_submit():
+        website.url = form.url.data
+        website.description = form.description.data
+        website.status = form.status.data
+        website.user_id = current_app.id
+
+        try:
+            db.session.add(website)
+            db.session.flush()
+            website_category.category_id = form.category.data
+            website_category.website_id = website.id
+            db.session.add(website_category)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise RuntimeError('DB error')
+        flash('Edit Successful!')
+        return redirect(url_for('index.html'))
+    form.url.data = website.url
+    form.title.data = website.title
+    form.description.data = website.description
+    form.category.data = website_category.category_id
+    form.status.data = website.status
+    return render_template('add_website.html', form=form)
