@@ -1,4 +1,4 @@
-from flask import render_template, abort, session, redirect, url_for, current_app, flash
+from flask import render_template, abort, session, redirect, url_for, current_app, flash, request
 from flask_login import current_user, login_required
 from .. import db
 from ..models import User, Website, Category, WebsiteCategory
@@ -8,7 +8,15 @@ from .forms import EditProfileForm, WebsiteForm, CategoryForm
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    page = request.args.get('page', 1, type=int)
+    pagination = Website.query.filter_by(user_id=current_user.id, is_del=0)\
+        .order_by(Website.modify_time.desc())\
+        .paginate(page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'], error_out=False)
+    websites = pagination.items
+    print(websites)
+    for w in websites:
+        print(w)
+    return render_template('index.html', posts=websites, pagination=pagination)
 
 
 @main.route('/user/<username>')

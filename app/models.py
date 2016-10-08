@@ -98,7 +98,7 @@ class Website(db.Model):
     status = db.Column(db.BOOLEAN, default=False)  # 状态
     is_del = db.Column(db.BOOLEAN, default=False)  # 默认不删除
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    modify_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    modify_time = db.Column(db.DateTime(), index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer,nullable=False)
 
     def __repr__(self):
